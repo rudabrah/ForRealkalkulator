@@ -6,9 +6,10 @@ Kalkulator::Kalkulator(QWidget *parent)
     , ui(new Ui::Kalkulator)
 {
     ui->setupUi(this);
-    connect(ui->clearBtn, &QPushButton::clicked, this, &Kalkulator::clearAll);
-    connect(ui->addLineBtn, &QPushButton::clicked, this, &Kalkulator::addNew);
-    connect(ui->removeBtn, &QPushButton::clicked, this, &Kalkulator::removeLastLine);
+    connect(ui->clearBtn, &QPushButton::clicked, this, &Kalkulator::clearAll);//Connects the "clear"-button to the function
+    connect(ui->addLineBtn, &QPushButton::clicked, this, &Kalkulator::addNew);//Connects the "add new"-button to function
+    connect(ui->removeBtn, &QPushButton::clicked, this, &Kalkulator::removeLastLine);//Connects the "remove line"-button to function
+    connect(ui->equalBtn, &QPushButton::clicked, this, &Kalkulator::calculate);
 
 }
 
@@ -32,7 +33,7 @@ void Kalkulator::clearAll()
 
 //Set some scaling
 
-
+//Add new calculation line.
 void Kalkulator::addNew()
 {
     QLineEdit* newLineEdit = new QLineEdit();
@@ -60,7 +61,7 @@ void Kalkulator::addNew()
 
 
 }
-
+//Remove lines of calculation.
 void Kalkulator::removeLastLine() {
     // Get the number of existing line edits and combo boxes
     int numLineEdits = ui->lineEditLayout->count();
@@ -77,68 +78,29 @@ void Kalkulator::removeLastLine() {
     }
 }
 
-QList<float> calculate()
-{
-    //This is reused from earlier function - It makes the code dynamic, parsing through
-    //all inputlines by counting the actual lines first.
-    QList<QLineEdit*> lineEdits = ui->centralwidget->findChildren<QLineEdit*>();
-    QList<float> inputnumbers;
+// Create a slot function to be called when a calculation is required
+void Kalkulator::calculate() {
+    float sum = ui->inputLine->text().toFloat(); // Get the initial value
 
-    for (QLineEdit* lineEdit : lineEdits)
-    {
-        QString text = lineEdit->text();
-        bool ok;
-        float value = text.toFloat(&ok);
-        if (ok)
-        {
-            inputnumbers.append(value);
-        }
-    }
-    return inputnumbers;
+    for (int i = 1; i < ui->lineEditLayout->count(); i++) { // Loop through all the other input lines
+        QComboBox* opComboBox = qobject_cast<QComboBox*>(ui->comboBoxLayout->itemAt(i)->widget()); // Get the QComboBox for the operator
+        QLineEdit* numLineEdit = qobject_cast<QLineEdit*>(ui->lineEditLayout->itemAt(i)->widget()); // Get the QLineEdit for the number
 
 
-}
-
-//Herfra sliter vi - for å hente variabler må jeg ha Kalkulator:: forran
-
-/*QList<QString> getExpressions()
-{
-    //Reuse yet again, but with the comboboxes.
-    QList<QComboBox*> comboBoxes = ui->centralwidget->findChildren<QComboBox*>();
-    QList<QString> expresions;
-
-    for (QComboBox* combobox : comboBoxes)
-    {
-        QString exps = combobox ->currentText();
-
-        expresions.append(exps);
-    }
-    return expresions;
-
-}*/
-
-float calculateResult(const QList<float>& values, const QList<QString>& operators) {
-    float result = values[0];  // Start with the first value in the list
-
-    for (int i = 1; i < values.size(); i++) {
-        const QString& op = operators[i-1];
-        float value = values[i];
+        QString op = opComboBox->currentText(); // Get the operator
+        float num = numLineEdit->text().toFloat(); // Get the number
 
         if (op == "+") {
-            result += value;
+            sum += num;
         } else if (op == "-") {
-            result -= value;
+            sum -= num;
         } else if (op == "*") {
-            result *= value;
+            sum *= num;
         } else if (op == "/") {
-            if (value == 0) {
-                // Handle division by zero error
-                return 0.0;
-            } else {
-                result /= value;
-            }
+            sum /= num;
         }
     }
 
-    return result;
+    // Output the result to a label or another QLineEdit
+    ui->resLineEdit->setText(QString::number(sum));
 }
