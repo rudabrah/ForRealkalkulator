@@ -78,9 +78,11 @@ void Kalkulator::removeLastLine() {
     }
 }
 
+
 // Create a slot function to be called when a calculation is required
 void Kalkulator::calculate() {
     float sum = ui->inputLine->text().toFloat(); // Get the initial value
+
 
     for (int i = 1; i < ui->lineEditLayout->count(); i++) { // Loop through all the other input lines
         QComboBox* opComboBox = qobject_cast<QComboBox*>(ui->comboBoxLayout->itemAt(i)->widget()); // Get the QComboBox for the operator

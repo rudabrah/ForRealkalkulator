@@ -1,7 +1,7 @@
 #ifndef KALKULATOR_H
 #define KALKULATOR_H
 
-#include "qlineedit.h"
+//#include "qlineedit.h"
 #include <QMainWindow>
 #include <QArrayData>
 
@@ -24,7 +24,6 @@ private:
     void addNew();
     void removeLastLine();
     void calculate();
-    void getExpressions();
-    float calculateResult();
+
 };
 #endif // KALKULATOR_H
